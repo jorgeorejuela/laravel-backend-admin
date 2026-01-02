@@ -1,47 +1,210 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - {{ config('app.name', 'Laravel') }}</title>
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        .background-radial-gradient {
+            background-color: #1a237e; /* Deep Indigo/Blue base */
+            background-image: radial-gradient(650px circle at 0% 0%,
+                hsl(218, 41%, 35%) 15%,
+                hsl(218, 41%, 30%) 35%,
+                hsl(218, 41%, 20%) 75%,
+                hsl(218, 41%, 19%) 80%,
+                transparent 100%),
+            radial-gradient(1250px circle at 100% 100%,
+                hsl(218, 41%, 45%) 15%,
+                hsl(218, 41%, 30%) 35%,
+                hsl(218, 41%, 20%) 75%,
+                hsl(218, 41%, 19%) 80%,
+                transparent 100%);
+        }
+
+        #radius-shape-1 {
+            height: 220px;
+            width: 220px;
+            top: -60px;
+            left: -130px;
+            background: radial-gradient(#6200ea, #b388ff); /* Vivid Purple */
+            overflow: hidden;
+            opacity: 0.8;
+        }
+
+        #radius-shape-2 {
+            border-radius: 38% 62% 63% 37% / 70% 33% 67% 30%;
+            bottom: -60px;
+            right: -110px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(#6200ea, #b388ff); /* Vivid Purple */
+            overflow: hidden;
+            opacity: 0.8;
+        }
+
+        .bg-glass {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: saturate(200%) blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Custom Input Styles to match the image */
+        .form-control-custom {
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem; /* Rounded corners like image */
+            transition: all 0.3s ease;
+        }
+        .form-control-custom:focus {
+            border-color: #3f51b5;
+            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.1);
+        }
+        
+        .btn-primary-custom {
+            background-color: #396afc; /* Royal Blue */
+            background-image: linear-gradient(to right, #2948ff, #396afc);
+            border: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+        .btn-primary-custom:hover {
+            background-color: #2948ff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(41, 72, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="antialiased font-sans text-gray-900">
+    <section class="background-radial-gradient overflow-hidden min-h-screen flex items-center relative">
+        <div class="container mx-auto px-6 py-12 h-full">
+            <div class="flex flex-wrap items-center justify-center lg:justify-between h-full g-6 text-center lg:text-left">
+                
+                <!-- Left Column: Text & Context -->
+                <div class="w-full lg:w-1/2 mb-12 lg:mb-0 relative z-10 text-white">
+                    <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight mb-6 drop-shadow-lg leading-tight">
+                        Sistema de <br />
+                        <span style="color: #b388ff">Gestión Administrativa</span>
+                    </h1>
+                    <p class="text-lg opacity-80 mb-8 leading-relaxed max-w-lg mx-auto lg:mx-0 font-light">
+                        Control total sobre usuarios, reportes y métricas de tu negocio.
+                        Accede al panel para administrar tu plataforma de manera segura y eficiente.
+                    </p>
+                    
+                    <!-- Feature Icons/Images (Accord to system) -->
+                    <div class="flex justify-center lg:justify-start gap-6 opacity-70">
+                         <div class="flex flex-col items-center">
+                            <div class="p-3 bg-white/10 rounded-full mb-2">
+                                <i class="fas fa-users text-2xl"></i>
+                            </div>
+                            <span class="text-xs">Usuarios</span>
+                         </div>
+                         <div class="flex flex-col items-center">
+                            <div class="p-3 bg-white/10 rounded-full mb-2">
+                                <i class="fas fa-chart-line text-2xl"></i>
+                            </div>
+                            <span class="text-xs">Métricas</span>
+                         </div>
+                         <div class="flex flex-col items-center">
+                            <div class="p-3 bg-white/10 rounded-full mb-2">
+                                <i class="fas fa-shield-alt text-2xl"></i>
+                            </div>
+                            <span class="text-xs">Seguridad</span>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Form -->
+                <div class="w-full lg:w-5/12 relative">
+                    <!-- Decorative Shapes -->
+                    <div id="radius-shape-1" class="absolute rounded-full shadow-2xl animate-pulse"></div>
+                    <div id="radius-shape-2" class="absolute shadow-2xl"></div>
+
+                    <div class="relative bg-glass rounded-xl shadow-2xl overflow-hidden z-10">
+                        <div class="p-8 md:p-10">
+                            
+                            <form method="POST" action="{{ route('login') }}">
+                                @csrf
+                                
+                                <!-- Email input -->
+                                <div class="mb-5 relative text-left">
+                                    <label class="block text-gray-600 text-sm font-medium mb-2" for="email">
+                                        Correo electrónico
+                                    </label>
+                                    <input type="email" id="email" name="email" :value="old('email')" required autofocus autocomplete="username"
+                                        class="w-full form-control-custom text-gray-700 bg-white"
+                                        placeholder="admin@ejemplo.com" />
+                                    <x-input-error :messages="$errors->get('email')" class="mt-1 text-red-500 text-xs" />
+                                </div>
+
+                                <!-- Password input -->
+                                <div class="mb-5 relative text-left">
+                                    <label class="block text-gray-600 text-sm font-medium mb-2" for="password">
+                                        Contraseña
+                                    </label>
+                                    <input type="password" id="password" name="password" required autocomplete="current-password"
+                                        class="w-full form-control-custom text-gray-700 bg-white"
+                                        placeholder="••••••••" />
+                                    <x-input-error :messages="$errors->get('password')" class="mt-1 text-red-500 text-xs" />
+                                </div>
+
+                                <!-- Checkbox -->
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="remember" id="remember_me" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer">
+                                        <label for="remember_me" class="ml-2 block text-sm text-gray-600 cursor-pointer">
+                                            Recuérdame
+                                        </label>
+                                    </div>
+                                    @if (Route::has('password.request'))
+                                        <a href="{{ route('password.request') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors">
+                                            ¿Olvidaste tu contraseña?
+                                        </a>
+                                    @endif
+                                </div>
+
+                                <!-- Submit button -->
+                                <button type="submit" class="w-full btn-primary-custom text-white py-3 px-4 rounded shadow-md transition duration-200">
+                                    Iniciar Sesión
+                                </button>
+
+                                <!-- Social Login -->
+                                <div class="mt-8 text-center">
+                                    <p class="text-gray-500 text-sm mb-4">o ingresa con:</p>
+                                    
+                                    <div class="flex justify-center gap-4">
+                                        <button type="button" class="w-9 h-9 rounded-full bg-gray-100 text-blue-600 flex items-center justify-center hover:bg-blue-50 transition-colors">
+                                            <i class="fab fa-facebook-f text-lg"></i>
+                                        </button>
+                                        <button type="button" class="w-9 h-9 rounded-full bg-gray-100 text-red-500 flex items-center justify-center hover:bg-red-50 transition-colors">
+                                            <i class="fab fa-google text-lg"></i>
+                                        </button>
+                                        <button type="button" class="w-9 h-9 rounded-full bg-gray-100 text-sky-500 flex items-center justify-center hover:bg-sky-50 transition-colors">
+                                            <i class="fab fa-twitter text-lg"></i>
+                                        </button>
+                                        <button type="button" class="w-9 h-9 rounded-full bg-gray-100 text-gray-800 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                                            <i class="fab fa-github text-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </section>
+</body>
+</html>
